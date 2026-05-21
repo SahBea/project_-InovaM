@@ -1,0 +1,67 @@
+.contact {
+  background-color: var(--bg-card-alt);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 50px;
+  align-items: stretch;
+}
+
+@media (max-width: 992px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+.contact-info-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.contact-detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.contact-map-wrapper {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  height: 250px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.contact-map-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.contact-form-panel {
+  text-align: left;
+}
+
+.submit-success-box {
+  background-color: rgba(37, 211, 102, 0.1);
+  border: 1px solid #25D366;
+  color: #128C7E;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dark-theme .submit-success-box {
+  background-color: rgba(37, 211, 102, 0.15);
+  color: #25D366;
+}

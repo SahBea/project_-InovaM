@@ -1,0 +1,87 @@
+{
+  "companyName": "Inova Móveis Planejados",
+  "whatsappNumber": "5511999999999",
+  "adminPasswordHash": "548bd348d75e1177e4ddd1c7ba6dd6a0a2e2e5fe4726dfcfc4e69e2e0310057f",
+  "about": {
+    "title": "Nossa História",
+    "subtitle": "Mais de uma década unindo design moderno, tecnologia e marcenaria artesanal para criar espaços únicos.",
+    "paragraphs": [
+      "A Inova Móveis Planejados nasceu da paixão pelo design de interiores e da dedicação à marcenaria artesanal de alta precisão. Fundada com a missão de trazer sofisticação, funcionalidade e durabilidade a cada ambiente, nos especializamos em criar soluções personalizadas que se adaptam perfeitamente ao estilo de vida e necessidades de cada cliente.",
+      "Combinando técnicas tradicionais de marcenaria com tecnologia moderna de corte e ferragens de última geração, nossa equipe transforma MDF e madeiras selecionadas em móveis sob medida de alto padrão. Cuidamos de todo o processo, desde a concepção do design em 3D, fabricação própria, até a montagem final com equipe especializada.",
+      "Cada projeto para nós é único. Acreditamos que a marcenaria de qualidade é aquela que otimiza espaços, une ergonomia com estética refinada e realiza o sonho de transformar casas em lares confortáveis e acolhedores."
+    ],
+    "stats": [
+      { "value": "10+", "label": "Anos de Experiência" },
+      { "value": "500+", "label": "Projetos Entregues" },
+      { "value": "100%", "label": "Clientes Satisfeitos" },
+      { "value": "5 Anos", "label": "Garantia de Fábrica" }
+    ]
+  },
+  "materials": [
+    {
+      "id": "mdf-matte",
+      "name": "MDF Ultra Matte",
+      "category": "MDF",
+      "description": "Tecnologia anti-impressão digital e toque aveludado, ideal para frentes de armários de uso frequente.",
+      "tag": "Resistente à Umidade"
+    },
+    {
+      "id": "mdf-wood",
+      "name": "MDF Amadeirado Texturizado",
+      "category": "MDF",
+      "description": "Padrões que replicam com perfeição o relevo e o calor visual da madeira natural como Carvalho, Freijó e Nogueira.",
+      "tag": "Ecológico"
+    },
+    {
+      "id": "hardware-soft",
+      "name": "Dobradiças com Amortecimento",
+      "category": "Ferragens",
+      "description": "Fechamento suave e silencioso das portas, evitando impactos e prolongando a vida útil do móvel.",
+      "tag": "Premium"
+    },
+    {
+      "id": "hardware-touch",
+      "name": "Corrediças Ocultas Touch",
+      "category": "Ferragens",
+      "description": "Abertura por toque (click) que elimina a necessidade de puxadores, criando um visual limpo e minimalista.",
+      "tag": "Tecnologia"
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "Cozinha Integrada Sage",
+      "category": "cozinha",
+      "image": "/uploads/kitchen_modern.png",
+      "description": "Cozinha planejada com acabamento em laca verde oliva fosco, detalhes em madeira freijó e iluminação embutida em LED."
+    },
+    {
+      "id": "proj-2",
+      "title": "Closet Master em Carvalho",
+      "category": "quarto",
+      "image": "/uploads/bedroom_wardrobe.png",
+      "description": "Closet espaçoso com portas de vidro reflecta bronze, perfis em alumínio preto e gaveteiros com corrediças invisíveis."
+    },
+    {
+      "id": "proj-3",
+      "title": "Gabinete Suspenso de Banheiro",
+      "category": "banheiro",
+      "image": "/uploads/bathroom_vanity.png",
+      "description": "Móvel suspenso em MDF resistente a umidade, tampo em quartzo e nicho inferior iluminado para toalhas."
+    },
+    {
+      "id": "proj-4",
+      "title": "Home Theater Ripado",
+      "category": "sala",
+      "image": "/uploads/living_room_panel.png",
+      "description": "Painel de TV ripado em carvalho natural com rack suspenso em cinza chumbo e gavetas com abertura por toque."
+    },
+    {
+      "id": "proj-5",
+      "title": "Escritório Corporativo Inovador",
+      "category": "corporativo",
+      "image": "/uploads/office_workspace.png",
+      "description": "Estação de trabalho compartilhada com divisórias acústicas, gaveteiros integrados e organizadores de cabos."
+    }
+  ]
+}
