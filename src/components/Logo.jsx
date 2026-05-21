@@ -1,72 +1,103 @@
 import React from 'react';
 
 export default function Logo({ className = '', height = 45, light = false }) {
-  const primaryColor = light ? '#FFFFFF' : 'var(--primary)';
-  const secondaryColor = light ? 'rgba(255, 255, 255, 0.8)' : 'var(--text-muted)';
-  const accentColor = 'var(--accent)';
+  // Configurações de cores baseadas nas preferências do tema
+  const textColor = light ? '#FFFFFF' : 'var(--text)';
+  const accentColor = 'var(--accent)'; // Tom cobre/madeira quente do logo original
+
+  // Geração dos dentes da serra para a lâmina cortada ao meio (semicírculo superior)
+  const teeth = [];
+  const teethCount = 15;
+  const cx = 45;       // Centro X da serra
+  const cy = 52;       // Centro Y da serra (alinhado com a linha horizontal)
+  const rInner = 22;   // Raio interno
+  const rOuter = 26;   // Raio externo (ponta do dente)
+
+  for (let i = 0; i < teethCount; i++) {
+    // Ângulos de 180° (esquerda) até 360° (direita)
+    const angleStart = 180 + (i * 180) / teethCount;
+    const angleTip = 180 + ((i + 0.6) * 180) / teethCount;
+    const angleEnd = 180 + ((i + 1) * 180) / teethCount;
+
+    const radStart = (angleStart * Math.PI) / 180;
+    const radTip = (angleTip * Math.PI) / 180;
+    const radEnd = (angleEnd * Math.PI) / 180;
+
+    const x1 = cx + Math.cos(radStart) * rInner;
+    const y1 = cy + Math.sin(radStart) * rInner;
+    const x2 = cx + Math.cos(radTip) * rOuter;
+    const y2 = cy + Math.sin(radTip) * rOuter;
+    const x3 = cx + Math.cos(radEnd) * rInner;
+    const y3 = cy + Math.sin(radEnd) * rInner;
+
+    teeth.push(
+      <polygon 
+        key={i}
+        points={`${x1},${y1} ${x2},${y2} ${x3},${y3}`}
+        fill={textColor}
+      />
+    );
+  }
+
+  // Altura padrão baseada no aspecto original 320x80 (proporção 4:1)
+  const width = height * 4;
 
   return (
-    <div className={`logo-container ${className}`} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      {/* Saw Blade Icon */}
-      <svg
-        width={height}
-        height={height}
-        viewBox="0 0 100 100"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        style={{ flexShrink: 0 }}
-      >
-        <circle cx="50" cy="50" r="38" fill="none" stroke={primaryColor} strokeWidth="6" strokeDasharray="12 4" />
-        <circle cx="50" cy="50" r="24" fill="none" stroke={accentColor} strokeWidth="4" />
-        <circle cx="50" cy="50" r="8" fill={primaryColor} />
-        {/* Teeth */}
-        {[...Array(16)].map((_, i) => {
-          const angle = (i * 360) / 16;
-          const rad = (angle * Math.PI) / 180;
-          const x1 = 50 + Math.cos(rad) * 38;
-          const y1 = 50 + Math.sin(rad) * 38;
-          const x2 = 50 + Math.cos(rad + 0.1) * 44;
-          const y2 = 50 + Math.sin(rad + 0.1) * 44;
-          const x3 = 50 + Math.cos(rad + 0.2) * 38;
-          const y3 = 50 + Math.sin(rad + 0.2) * 38;
-          return (
-            <path
-              key={i}
-              d={`M ${x1} ${y1} L ${x2} ${y2} L ${x3} ${y3} Z`}
-              fill={primaryColor}
-            />
-          );
-        })}
-      </svg>
+    <svg 
+      viewBox="0 0 320 80" 
+      width={width} 
+      height={height} 
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ display: 'block', overflow: 'visible' }}
+    >
+      {/* Linha Horizontal com pequenos círculos nas pontas */}
+      <line 
+        x1="15" 
+        y1="52" 
+        x2="305" 
+        y2="52" 
+        stroke={textColor} 
+        strokeWidth="2" 
+      />
+      <circle cx="15" cy="52" r="3" fill={textColor} />
+      <circle cx="305" cy="52" r="3" fill={textColor} />
 
-      {/* Brand Name Text */}
-      <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
-        <span
-          style={{
-            fontFamily: 'var(--font-heading)',
-            fontSize: '1.6rem',
-            fontWeight: '800',
-            color: primaryColor,
-            letterSpacing: '2px',
-            textTransform: 'uppercase',
-          }}
-        >
-          Inova
-        </span>
-        <span
-          style={{
-            fontFamily: 'var(--font-heading)',
-            fontSize: '0.62rem',
-            fontWeight: '600',
-            color: secondaryColor,
-            letterSpacing: '1px',
-            textTransform: 'uppercase',
-            marginTop: '2px',
-          }}
-        >
-          Móveis Planejados
-        </span>
-      </div>
-    </div>
+      {/* Lâmina de Serra em Semicírculo (com o furo central recortado) */}
+      <path 
+        d="M 22 52 A 23 23 0 0 1 68 52 L 51 52 A 6 6 0 0 0 39 52 Z" 
+        fill={textColor} 
+      />
+      
+      {/* Desenho dos dentes da serra */}
+      {teeth}
+
+      {/* Texto INOVA (Tom rose gold / cobre destacado) */}
+      <text 
+        x="80" 
+        y="44" 
+        fill={accentColor} 
+        fontFamily="var(--font-heading)" 
+        fontSize="42px" 
+        fontWeight="800" 
+        letterSpacing="4px"
+      >
+        INOVA
+      </text>
+
+      {/* Texto MÓVEIS PLANEJADOS */}
+      <text 
+        x="160" 
+        y="71" 
+        fill={textColor} 
+        fontFamily="var(--font-heading)" 
+        fontSize="11px" 
+        fontWeight="500" 
+        letterSpacing="6px" 
+        textAnchor="middle"
+      >
+        MÓVEIS PLANEJADOS
+      </text>
+    </svg>
   );
 }
