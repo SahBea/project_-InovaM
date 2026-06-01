@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, ShieldAlert, Key, Eye, EyeOff } from 'lucide-react';
-import { sha256 } from '../utils/crypto';
+import { Lock, ShieldAlert, User, Eye, EyeOff } from 'lucide-react';
 import Logo from '../components/Logo';
 import './AdminLogin.css';
 
-export default function AdminLogin({ adminPasswordHash, onLoginSuccess }) {
+export default function AdminLogin({ onLoginSuccess }) {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [githubToken, setGithubToken] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [lockoutTimeLeft, setLockoutTimeLeft] = useState(0);
 
   useEffect(() => {
-    // Check if user is currently locked out
+    // Check if user is currently locked out locally (for instant UI feedback)
     const lockoutUntil = localStorage.getItem('admin_lockout_until');
     if (lockoutUntil) {
       const timeLeft = Math.ceil((parseInt(lockoutUntil) - Date.now()) / 1000);
@@ -24,10 +23,6 @@ export default function AdminLogin({ adminPasswordHash, onLoginSuccess }) {
         localStorage.removeItem('admin_login_attempts');
       }
     }
-
-    // Set default token in input for user's convenience if already stored
-    const storedToken = sessionStorage.getItem('github_token') || localStorage.getItem('github_token_pref');
-    setGithubToken(storedToken || '');
   }, []);
 
   // Lockout countdown timer
@@ -54,43 +49,55 @@ export default function AdminLogin({ adminPasswordHash, onLoginSuccess }) {
     e.preventDefault();
     setError('');
 
-    // Check lockout again
+    // Check local lockout again
     const lockoutUntil = localStorage.getItem('admin_lockout_until');
     if (lockoutUntil && parseInt(lockoutUntil) > Date.now()) {
       return;
     }
 
-    if (!password || !githubToken) {
+    if (!username || !password) {
       setError('Por favor, preencha todos os campos.');
       return;
     }
 
-    const hashedInput = await sha256(password);
+    try {
+      setLoading(true);
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
 
-    if (hashedInput === adminPasswordHash) {
-      // Clear attempts on success
-      localStorage.removeItem('admin_login_attempts');
-      localStorage.removeItem('admin_lockout_until');
-      
-      // Save token in sessionStorage (cleared when browser closes)
-      sessionStorage.setItem('github_token', githubToken);
-      // Also save reference in local storage for preferences if needed
-      localStorage.setItem('github_token_pref', githubToken);
+      const data = await response.json();
 
-      onLoginSuccess();
-    } else {
-      // Increment failed attempts
-      let attempts = parseInt(localStorage.getItem('admin_login_attempts') || '0') + 1;
-      localStorage.setItem('admin_login_attempts', attempts.toString());
+      if (response.ok) {
+        // Clear local lockout attempts on success
+        localStorage.removeItem('admin_login_attempts');
+        localStorage.removeItem('admin_lockout_until');
+        
+        // Save JWT session token in sessionStorage (cleared when browser closes)
+        sessionStorage.setItem('admin_token', data.token);
 
-      if (attempts >= 5) {
-        const lockoutExpiration = Date.now() + 15 * 60 * 1000; // 15 mins
-        localStorage.setItem('admin_lockout_until', lockoutExpiration.toString());
-        setLockoutTimeLeft(15 * 60);
-        setError('Muitas tentativas malsucedidas. Acesso bloqueado por 15 minutos.');
+        onLoginSuccess();
       } else {
-        setError(`Senha incorreta. Tentativa ${attempts} de 5.`);
+        // Handle failed attempts locally to prevent spamming
+        let attempts = parseInt(localStorage.getItem('admin_login_attempts') || '0') + 1;
+        localStorage.setItem('admin_login_attempts', attempts.toString());
+
+        if (attempts >= 5 || response.status === 429) {
+          const lockoutExpiration = Date.now() + 15 * 60 * 1000; // 15 mins
+          localStorage.setItem('admin_lockout_until', lockoutExpiration.toString());
+          setLockoutTimeLeft(15 * 60);
+          setError('Muitas tentativas malsucedidas. Acesso bloqueado por 15 minutos.');
+        } else {
+          setError(data.error || 'Credenciais incorretas.');
+        }
       }
+    } catch (err) {
+      console.error(err);
+      setError('Erro de conexão com o servidor. Tente novamente.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -127,25 +134,23 @@ export default function AdminLogin({ adminPasswordHash, onLoginSuccess }) {
         )}
 
         <form onSubmit={handleLogin}>
-          {/* GitHub Token Input */}
+          {/* Username Input */}
           <div className="form-group">
-            <label htmlFor="token">Token do GitHub (Acesso CMS)</label>
+            <label htmlFor="username">Usuário</label>
             <div style={{ position: 'relative' }}>
-              <Key size={18} style={{ position: 'absolute', left: '14px', top: '15px', color: 'var(--text-muted)' }} />
+              <User size={18} style={{ position: 'absolute', left: '14px', top: '15px', color: 'var(--text-muted)' }} />
               <input 
-                type="password" 
-                id="token" 
+                type="text" 
+                id="username" 
                 className="form-control" 
                 style={{ paddingLeft: '44px' }}
-                value={githubToken}
-                onChange={(e) => setGithubToken(e.target.value)}
-                placeholder="ghp_..."
-                disabled={lockoutTimeLeft > 0}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Digite o usuário de acesso"
+                disabled={lockoutTimeLeft > 0 || loading}
+                required
               />
             </div>
-            <p className="token-help-text">
-              Utilizado para realizar commits automáticos e salvar as alterações no site.
-            </p>
           </div>
 
           {/* Password Input */}
@@ -161,7 +166,8 @@ export default function AdminLogin({ adminPasswordHash, onLoginSuccess }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Digite a senha do painel"
-                disabled={lockoutTimeLeft > 0}
+                disabled={lockoutTimeLeft > 0 || loading}
+                required
               />
               <button 
                 type="button"
@@ -177,9 +183,9 @@ export default function AdminLogin({ adminPasswordHash, onLoginSuccess }) {
             type="submit" 
             className="btn btn-primary"
             style={{ width: '100%', marginTop: '10px', padding: '14px 20px' }}
-            disabled={lockoutTimeLeft > 0}
+            disabled={lockoutTimeLeft > 0 || loading}
           >
-            Entrar no Painel
+            {loading ? 'Entrando...' : 'Entrar no Painel'}
           </button>
         </form>
       </div>
