@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { 
   Save, Plus, Trash2, Edit, Upload, X, Globe, PhoneCall, Info, LayoutList, Layers 
 } from 'lucide-react';
-import { commitFileToGithub, uploadImageToGithub } from '../utils/githubApi';
 import './AdminDashboard.css';
 
 export default function AdminDashboard({ initialData, onDataUpdate }) {
@@ -25,8 +24,8 @@ export default function AdminDashboard({ initialData, onDataUpdate }) {
     description: ''
   });
 
-  const getGitHubToken = () => {
-    return sessionStorage.getItem('github_token') || localStorage.getItem('github_token_pref') || '';
+  const getAuthToken = () => {
+    return sessionStorage.getItem('admin_token') || '';
   };
 
   const handleGeneralChange = (e) => {
@@ -89,28 +88,55 @@ export default function AdminDashboard({ initialData, onDataUpdate }) {
     setProjectForm(prev => ({ ...prev, [name]: value }));
   };
 
-  // Image upload handling for projects
+  // Image upload handling for projects via backend API
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const token = getGitHubToken();
+    const token = getAuthToken();
     if (!token) {
-      alert('Token do GitHub não encontrado. Faça o login novamente.');
+      alert('Sessão expirada ou inválida. Por favor, faça login novamente.');
       return;
     }
 
-    try {
-      setUploadingImage(true);
-      const uploadedPath = await uploadImageToGithub(token, file, `Upload image: ${file.name}`);
-      setProjectForm(prev => ({ ...prev, image: uploadedPath }));
-      alert('Imagem enviada para o GitHub com sucesso!');
-    } catch (err) {
-      console.error(err);
-      alert(`Falha no upload da imagem: ${err.message}`);
-    } finally {
-      setUploadingImage(false);
-    }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = async () => {
+      try {
+        setUploadingImage(true);
+        const base64Content = reader.result.split(',')[1];
+        
+        const response = await fetch('/api/content/upload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            fileName: file.name,
+            base64Content: base64Content
+          })
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Erro no upload da imagem.');
+        }
+
+        setProjectForm(prev => ({ ...prev, image: data.url }));
+        if (data.warning) {
+          alert(`Imagem salva localmente mas não enviada ao GitHub: ${data.warning}`);
+        } else {
+          alert('Imagem enviada com sucesso!');
+        }
+      } catch (err) {
+        console.error(err);
+        alert(`Falha no upload da imagem: ${err.message}`);
+      } finally {
+        setUploadingImage(false);
+      }
+    };
   };
 
   // Save project in local state list
@@ -147,11 +173,11 @@ export default function AdminDashboard({ initialData, onDataUpdate }) {
     }
   };
 
-  // Save the entire state back to GitHub contents file JSON
+  // Save the entire state back via the Express server API
   const handleCommitAll = async () => {
-    const token = getGitHubToken();
+    const token = getAuthToken();
     if (!token) {
-      setSaveStatus({ success: false, message: 'Erro: Token de acesso do GitHub não encontrado.' });
+      setSaveStatus({ success: false, message: 'Erro: Sessão de administrador não encontrada. Faça o login novamente.' });
       return;
     }
 
@@ -159,23 +185,40 @@ export default function AdminDashboard({ initialData, onDataUpdate }) {
       setSaving(true);
       setSaveStatus({ success: null, message: '' });
 
-      // Build file path relative to repo root
-      const filePath = 'src/data/content.json';
-      const fileContentStr = JSON.stringify(content, null, 2);
+      const response = await fetch('/api/content/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(content)
+      });
 
-      await commitFileToGithub(token, filePath, fileContentStr, 'CMS: Atualização de textos e projetos do site');
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao salvar conteúdo.');
+      }
       
       // Update the state of parent App
-      onDataUpdate(content);
-      setSaveStatus({ 
-        success: true, 
-        message: 'Alterações enviadas com sucesso! O Vercel está reconstruindo o site agora. As atualizações estarão visíveis em cerca de 2 minutos.' 
-      });
+      onDataUpdate(data.content);
+      
+      if (data.warning) {
+        setSaveStatus({ 
+          success: true, 
+          message: `Alterações salvas localmente com aviso: ${data.warning}` 
+        });
+      } else {
+        setSaveStatus({ 
+          success: true, 
+          message: 'Alterações salvas e sincronizadas com sucesso!' 
+        });
+      }
     } catch (error) {
       console.error(error);
       setSaveStatus({ 
         success: false, 
-        message: `Falha ao salvar no GitHub: ${error.message}. Verifique seu token e permissões do repositório.` 
+        message: `Falha ao salvar: ${error.message}` 
       });
     } finally {
       setSaving(false);
