@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Mail, MapPin, Clock, Lock, Unlock } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Lock, Unlock, Instagram } from 'lucide-react';
 import Logo from './Logo';
 import './Footer.css';
 
@@ -90,6 +90,12 @@ export default function Footer({ setView, isAdmin }) {
               <li className="footer-contact-item">
                 <Mail size={18} />
                 <span>contato@inovamoveis.com.br</span>
+              </li>
+              <li className="footer-contact-item">
+                <Instagram size={18} />
+                <a href="https://instagram.com/_moveisinova" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
+                  @_moveisinova
+                </a>
               </li>
               <li className="footer-contact-item">
                 <Clock size={18} />
