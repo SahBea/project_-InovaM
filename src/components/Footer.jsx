@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Mail, MapPin, Clock, Lock, Unlock, Instagram } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Lock, Unlock, Link } from 'lucide-react';
 import Logo from './Logo';
 import './Footer.css';
 
@@ -34,22 +34,22 @@ export default function Footer({ setView, isAdmin }) {
           <div className="footer-brand">
             <Logo light={true} />
             <p className="footer-tagline">
-              Móveis planejados sob medida com acabamento de alto padrão, transformando ambientes e realizando o sonho da casa perfeita.
+              MÃ³veis planejados sob medida com acabamento de alto padrÃ£o, transformando ambientes e realizando o sonho da casa perfeita.
             </p>
           </div>
 
           {/* Quick Links Column */}
           <div>
-            <h3 className="footer-heading">Navegação</h3>
+            <h3 className="footer-heading">NavegaÃ§Ã£o</h3>
             <ul className="footer-links">
               <li>
                 <span className="footer-link" onClick={() => handleNavClick('inicio')}>
-                  Início
+                  InÃ­cio
                 </span>
               </li>
               <li>
                 <span className="footer-link" onClick={() => handleNavClick('historia')}>
-                  História
+                  HistÃ³ria
                 </span>
               </li>
               <li>
@@ -77,11 +77,11 @@ export default function Footer({ setView, isAdmin }) {
 
           {/* Contact Info Column */}
           <div>
-            <h3 className="footer-heading">Contato e Endereço</h3>
+            <h3 className="footer-heading">Contato e EndereÃ§o</h3>
             <ul className="footer-contact-list">
               <li className="footer-contact-item">
                 <MapPin size={18} />
-                <span>Av. Principal da Marcenaria, 1000 - Centro, São Paulo - SP</span>
+                <span>Av. Principal da Marcenaria, 1000 - Centro, SÃ£o Paulo - SP</span>
               </li>
               <li className="footer-contact-item">
                 <Phone size={18} />
@@ -92,14 +92,14 @@ export default function Footer({ setView, isAdmin }) {
                 <span>contato@inovamoveis.com.br</span>
               </li>
               <li className="footer-contact-item">
-                <Instagram size={18} />
+                <Link size={18} />
                 <a href="https://instagram.com/_moveisinova" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
                   @_moveisinova
                 </a>
               </li>
               <li className="footer-contact-item">
                 <Clock size={18} />
-                <span>Seg - Sex: 08:00 às 18:00<br />Sáb: 08:00 às 13:00</span>
+                <span>Seg - Sex: 08:00 Ã s 18:00<br />SÃ¡b: 08:00 Ã s 13:00</span>
               </li>
             </ul>
           </div>
@@ -108,7 +108,7 @@ export default function Footer({ setView, isAdmin }) {
 
         {/* Footer Bottom */}
         <div className="footer-bottom">
-          <p>&copy; {currentYear} Inova Móveis Planejados. Todos os direitos reservados.</p>
+          <p>&copy; {currentYear} Inova MÃ³veis Planejados. Todos os direitos reservados.</p>
           
           {/* Subtle Admin Entrance */}
           <button 
