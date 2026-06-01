@@ -25,9 +25,25 @@ export default function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
+  // Load content dynamically from backend API on mount
+  useEffect(() => {
+    const loadContentData = async () => {
+      try {
+        const response = await fetch('/api/content');
+        if (response.ok) {
+          const freshData = await response.json();
+          setData(freshData);
+        }
+      } catch (err) {
+        console.warn('Backend server not reachable, using bundled contentData fallback:', err);
+      }
+    };
+    loadContentData();
+  }, []);
+
   // Check login state and dark mode preference on load
   useEffect(() => {
-    const token = sessionStorage.getItem('github_token') || localStorage.getItem('github_token_pref');
+    const token = sessionStorage.getItem('admin_token');
     if (token) {
       setIsAdmin(true);
     }
@@ -61,8 +77,7 @@ export default function App() {
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem('github_token');
-    localStorage.removeItem('github_token_pref');
+    sessionStorage.removeItem('admin_token');
     setIsAdmin(false);
     setView('home');
   };
@@ -110,7 +125,6 @@ export default function App() {
             />
           ) : (
             <AdminLogin 
-              adminPasswordHash={data.adminPasswordHash}
               onLoginSuccess={handleLoginSuccess}
             />
           )
