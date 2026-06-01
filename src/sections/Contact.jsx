@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle, Instagram } from 'lucide-react';
 import './Contact.css';
 
 export default function Contact({ whatsappNumber }) {
@@ -83,6 +83,20 @@ export default function Contact({ whatsappNumber }) {
                   <div style={{ textAlign: 'left' }}>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>E-mail para contatos</div>
                     <div style={{ fontWeight: '600', color: 'var(--text)' }}>contato@inovamoveis.com.br</div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div style={{ backgroundColor: 'var(--primary)', color: '#FFF', padding: '12px', borderRadius: '50%' }}>
+                    <Instagram size={20} />
+                  </div>
+                  <div style={{ textAlign: 'left' }}>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Instagram</div>
+                    <div style={{ fontWeight: '600', color: 'var(--text)' }}>
+                      <a href="https://instagram.com/_moveisinova" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
+                        @_moveisinova
+                      </a>
+                    </div>
                   </div>
                 </div>
 
