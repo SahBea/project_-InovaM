@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from "lucide-react";
-import InstagramIcon from "./components/InstagramIcon";
+import InstagramIcon from "../components/InstagramIcon";
 import './Contact.css';
 
 export default function Contact({ whatsappNumber }) {
