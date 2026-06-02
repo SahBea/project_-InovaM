@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle, Instagram } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from "lucide-react";
+import InstagramIcon from "./components/InstagramIcon";
 import './Contact.css';
 
 export default function Contact({ whatsappNumber }) {
@@ -88,7 +89,7 @@ export default function Contact({ whatsappNumber }) {
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                   <div style={{ backgroundColor: 'var(--primary)', color: '#FFF', padding: '12px', borderRadius: '50%' }}>
-                    <Instagram size={20} />
+                    <InstagramIcon size={20} />
                   </div>
                   <div style={{ textAlign: 'left' }}>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Instagram</div>
